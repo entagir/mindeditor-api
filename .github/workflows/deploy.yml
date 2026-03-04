@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+              go-version: 1.26
+      # Setup key
+      - run: set -eu
+      - run: mkdir "$HOME/.ssh"
+      - run: echo "${{secrets.key}}" > "$HOME/.ssh/id_rsa"
+      - run: chmod 600 "$HOME/.ssh/id_rsa"
+
+      - run: mkdir ./build
+      - run: echo "${{vars.config}}" > "./build/config.json"
+
+      # Build
+      - name: Go Mod
+        run: go mod download
+
+      - name: Go Build
+        run: go build -o ./build/main ./cmd/web
+
+      # Deploy  
+      - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/main nginx@79.174.86.105:/var/www/mind.entagir.xyz/main
+      - run: rsync -e "ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no" --archive --compress --delete ./build/config.json nginx@79.174.86.105:/var/www/mind.entagir.xyz/config.json
+
+      - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 pm2 delete "mind.entagir.xyz"
+      - run: ssh -p 22 -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no nginx@79.174.86.105 pm2 start main --name "mind.entagir.xyz" --cwd "/var/www/mind.entagir.xyz"

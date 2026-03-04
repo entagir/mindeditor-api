@@ -8,4 +8,4 @@
 ## Description
 Mind maps editor backend.
 Save diagrams in the cloud, publish, collaborate and control access.
-The project is developed in golang and postgres, uses redis for caching and S3 minio for storing media.
+The project is developed in golang and postgres and uses redis for caching.
