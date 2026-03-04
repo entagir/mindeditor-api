@@ -19,7 +19,7 @@ jobs:
       - run: chmod 600 "$HOME/.ssh/id_rsa"
 
       - run: mkdir ./build
-      - run: echo "${{vars.config}}" > "./build/config.json"
+      - run: echo "${{secrets.config}}" > "./build/config.json"
 
       # Build
       - name: Go Mod
