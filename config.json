@@ -1,0 +1,21 @@
+{
+    "server": {
+        "host": "localhost",
+        "port": 8182
+    },
+    "db": {
+        "user": "mindeditor",
+        "password": "mind",
+        "dbname": "mindeditor"
+    },
+    "redis": {
+        "host": "localhost",
+        "port": 6379,
+        "password": "",
+        "db": 1
+    },
+    "hashids": {
+        "salt": "mind salt",
+        "minlength": 16
+    }
+}
